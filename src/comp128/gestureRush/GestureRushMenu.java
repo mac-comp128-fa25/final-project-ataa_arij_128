@@ -47,7 +47,7 @@ public class GestureRushMenu {
 
         startButton.onClick(() -> {
             canvas.closeWindow();
-            //new GestureRushGame();  
+            new GestureRushGame();  
         });
     }
 }

@@ -18,4 +18,25 @@ public class GestureTemplate {
     public List<Point> getPoints() { 
         return points; 
     }
+
+    public void removePoint(){
+        return;
+    }
+
+    public Point createArrow(){
+        return null;
+        
+    }
+
+    public Point createCircle(){
+        return null;
+    }
+
+    public Point createTriangle(){
+        return null;
+    }
+
+
+
 }
+
