@@ -4,7 +4,7 @@ public class GestureRushGame {
 
     private final CanvasWindow canvas;
     private final List<GestureTemplate> templates;
-    private Random rand = new Random(3);
+    private Random rand = new Random();
 
     public GestureRushGame(){
         canvas = new CanvasWindow("GESTURE RUSH ", 600,600);
@@ -17,6 +17,12 @@ public class GestureRushGame {
             //-falling gesture
         // update()
 
+    }
+
+    public void spawnNext(){
+        GestureTemplate t = templates.get(rand.getnextInt(templates.size()));
+        FallingGestures ft = new FallingGestures(t, canvas.getWidth(), canvas.getHeight());
+        canvas.add(ft);
     }
 
 
