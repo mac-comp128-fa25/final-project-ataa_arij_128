@@ -1,8 +1,9 @@
 package comp128.gestureRush;
 
-import edu.macalester.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.macalester.graphics.Point;
 
 public class GestureTemplate {
     private final String name;
@@ -20,7 +21,7 @@ public class GestureTemplate {
     }
 
     public void removePoint(){
-        return;
+        
     }
 
     public Point createArrow(){

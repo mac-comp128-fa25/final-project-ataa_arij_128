@@ -1,3 +1,3 @@
-# Project Title Goes Here
+# Gesture Rush
 
 Info about your project goes here

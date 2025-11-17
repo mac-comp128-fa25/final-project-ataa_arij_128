@@ -1,5 +1,11 @@
 package comp128.gestureRush;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import edu.macalester.graphics.CanvasWindow;
+
 public class GestureRushGame {
 
     private final CanvasWindow canvas;
