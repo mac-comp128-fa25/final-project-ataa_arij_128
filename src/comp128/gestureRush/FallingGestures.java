@@ -4,25 +4,26 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.macalester.graphics.GraphicsGroup;
 import edu.macalester.graphics.Point;
 
-public class FallingGestures {
+public class FallingGestures extends GraphicsGroup{
 
     private double x;
     private double y;
-    private double speed;
+    private final double speed;
     private GestureTemplate gesture;
     private Point centroid;
     private double maxX; //From the canvas, bounds of the gesture falling
     private double maxY;
 
-    public FallingGestures(GestureTemplate gesture, double x, double y, double speed, double maxX, double maxY){
+    public FallingGestures(GestureTemplate gesture, double x, double y, double maxX, double maxY){
         
         this.gesture = gesture;
         centroid = calculateCentroid(gesture); //Figure out why this is overideable
         this.x = x;
         this.y = y;
-        this.speed = speed;
+        this.speed = 120 + Math.random() * 78;
         this.maxX = maxX;
         this.maxY = maxY;
 
@@ -72,6 +73,11 @@ public class FallingGestures {
      */
        // Think about if this moves the entire gesture (if not figure out how to do so)
 
+       public boolean update(double x, double height){
+        moveBy(0, this.speed * x);
+        return getY() < height;
+       }
+ 
 
 
     
