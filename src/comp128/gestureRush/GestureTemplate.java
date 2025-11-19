@@ -24,19 +24,6 @@ public class GestureTemplate {
         
     }
 
-    public Point createArrow(){
-        return null;
-        
-    }
-
-    public Point createCircle(){
-        return null;
-    }
-
-    public Point createTriangle(){
-        return null;
-    }
-
 
 
 }
