@@ -6,12 +6,12 @@ import edu.macalester.graphics.ui.Button;
 
 import java.awt.Color;
 
-public class GestureRushMenu {
+public class Menu {
 
     private CanvasWindow canvas;
     private Button startButton;
 
-    public GestureRushMenu() {
+    public Menu() {
         canvas = new CanvasWindow("Gesture Rush Menu", 600, 600);
         setupUI();
     }

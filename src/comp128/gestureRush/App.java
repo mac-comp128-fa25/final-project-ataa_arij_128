@@ -1,7 +1,7 @@
 package comp128.gestureRush;
 
-public class GestureRushApp {
+public class App {
     public static void main(String[] args) {
-        new GestureRushMenu();
+        new Menu();
     }
 }
