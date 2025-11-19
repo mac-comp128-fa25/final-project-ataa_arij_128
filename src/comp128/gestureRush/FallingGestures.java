@@ -1,84 +1,41 @@
-package comp128.gestureRush;
-
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.List;
+package comp128.gestureRush; 
 
 import edu.macalester.graphics.GraphicsGroup;
+import edu.macalester.graphics.Line;
 import edu.macalester.graphics.Point;
+import edu.macalester.graphics.GraphicsText;
+import java.awt.Color;
+import java.util.List;
 
-public class FallingGestures extends GraphicsGroup{
-
-    private double x;
-    private double y;
+public class FallingGestures extends GraphicsGroup {
     private final double speed;
-    private GestureTemplate gesture;
-    private Point centroid;
-    private double maxX; //From the canvas, bounds of the gesture falling
-    private double maxY;
+    public double size;
 
-    public FallingGestures(GestureTemplate gesture, double x, double y, double maxX, double maxY){
-        
-        this.gesture = gesture;
-        centroid = calculateCentroid(gesture); //Figure out why this is overideable
-        this.x = x;
-        this.y = y;
-        this.speed = 120 + Math.random() * 78;
-        this.maxX = maxX;
-        this.maxY = maxY;
+    public FallingGestures(GestureTemplate template, double canvasWidth, double shapeSize) {
+        this.size = shapeSize;              
+        double x = 50 + Math.random() * (canvasWidth - 100);
+        double y = -size - 10;
 
+        List<Point> templatePoints = template.getPoints();
+        if (templatePoints != null && templatePoints.size() > 1) {
+            for (int i = 0; i < templatePoints.size() - 1; i++) {
+                Point point1 = templatePoints.get(i);
+                Point point2 = templatePoints.get(i + 1);
+                Line gestureLine = new Line(
+                    point1.getX() / 100.0 * size, point1.getY() / 100.0 * size,
+                    point2.getX() / 100.0 * size, point2.getY() / 100.0 * size
+                );
+                gestureLine.setStrokeColor(Color.BLACK);
+                gestureLine.setStrokeWidth(4); 
+                add(gestureLine);
+            }
+        } 
+        setPosition(x, y);
+        speed = 120 + Math.random() * 78;
     }
 
-    /**
-     * Helper function which calculates the centroid of a given deque of points
-     * 
-     * @param path
-     * @return centroid
-     */
-    public Point calculateCentroid(GestureTemplate g) {
-        double totalX = 0;
-        double totalY = 0;
-        List<Point> path = g.getPoints(); 
-        Iterator<Point> iter = path.iterator();
-
-        while (iter.hasNext()) {
-            Point point = iter.next();
-            totalX += point.getX();
-            totalY += point.getY();
-        }
-
-        double averageX = totalX / path.size();
-        double averageY = totalY / path.size();
-        Point centroid = new Point(averageX, averageY);
-
-        return centroid;
+    public boolean update(double x, double canvasHeight) {
+        moveBy(0, speed * x);
+        return getY() < canvasHeight;
     }
-
-    /**
-     * Update the cannon ball's position if it is in bounds
-     * @return true if the ball is in within the maxXBound and maxYBound
-     */
-     /* 
-    public boolean updatePosition(double dt) {
-        centerX = dt * xVelocity + centerX; 
-        centerY = dt * yVelocity + centerY;
-        if (centerX > 0 && centerY > 0 && maxX > centerX && maxY > centerY){
-           ballShape.setX(centerX); 
-           ballShape.setY(centerY);
-           yVelocity -= (GRAVITY * dt);
-           return true;
-        }
-        return false;
-    }
-     */
-       // Think about if this moves the entire gesture (if not figure out how to do so)
-
-       public boolean update(double x, double height){
-        moveBy(0, this.speed * x);
-        return getY() < height;
-       }
- 
-
-
-    
 }

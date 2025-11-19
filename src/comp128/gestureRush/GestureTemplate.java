@@ -23,7 +23,10 @@ public class GestureTemplate {
     public void removePoint(){
         
     }
-
+    
+    public boolean checkifTrue(Point p){
+        return false;
+    }
 
 
 }

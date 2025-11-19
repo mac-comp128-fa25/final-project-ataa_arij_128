@@ -12,7 +12,7 @@ public class GestureRushMenu {
     private Button startButton;
 
     public GestureRushMenu() {
-        canvas = new CanvasWindow("Gesture Rush - Menu", 600, 600);
+        canvas = new CanvasWindow("Gesture Rush Menu", 600, 600);
         setupUI();
     }
 
@@ -37,7 +37,7 @@ public class GestureRushMenu {
         rules.setFontSize(14);
         rules.setCenter(canvas.getWidth() / 2.0, 260);
          GraphicsText rulesTwo = new GraphicsText(
-            " draw to match before it hits the bottom !"
+            "draw to match before it hits the bottom!"
         );
         rulesTwo.setFillColor(Color.WHITE);
         rulesTwo.setFontSize(14);
