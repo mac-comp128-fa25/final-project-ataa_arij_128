@@ -1,11 +1,14 @@
 package comp128.gestureRush;
 
-import edu.macalester.graphics.CanvasWindow;
-import edu.macalester.graphics.Point;
 import java.awt.Color;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Random;
+
+import edu.macalester.graphics.CanvasWindow;
+import edu.macalester.graphics.Point;
 
 public class GestureRushGame {
 
@@ -13,6 +16,7 @@ public class GestureRushGame {
     private FallingGestures currentGesture;
     private final List<GestureTemplate> templates;
     private final Random rand = new Random();
+    private Deque<Point> appDeque; //Deque that stores the points appended from the traced gesture (might be moved to Score class)
 
     private double shapeSize = 90;
 
@@ -23,9 +27,16 @@ public class GestureRushGame {
         templates.add(createArrow());
         templates.add(createCircle());
         templates.add(createTriangle());
+        appDeque = new ArrayDeque<>();
 
         spawnNext();
         canvas.animate(this::update);
+        canvas.onDrag(event -> {
+            if (event.getPosition().equals(currentGesture.getPosition()))
+            appDeque.push(event.getPosition());
+            // removeGesturePoint
+            
+        });
     }
 
     private void spawnNext() {
@@ -74,5 +85,15 @@ public class GestureRushGame {
         trianglePoints.add(new Point(85, 80));
         trianglePoints.add(new Point(50, 10));
         return new GestureTemplate("triangle", trianglePoints);
+    }
+
+    /*
+     * Helper method 
+     * removes the point from the gesture that the mouse is clicking on
+     */
+    private boolean removeGesturePoint(){
+        return false;
+        //List<Point> gesturePoints = currentGesture.getTemplate().getPoints(); 
+        
     }
 }

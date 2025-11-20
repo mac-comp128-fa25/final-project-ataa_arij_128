@@ -1,18 +1,20 @@
 package comp128.gestureRush; 
 
-import edu.macalester.graphics.GraphicsGroup;
-import edu.macalester.graphics.Line;
-import edu.macalester.graphics.Point;
-import edu.macalester.graphics.GraphicsText;
 import java.awt.Color;
 import java.util.List;
 
+import edu.macalester.graphics.GraphicsGroup;
+import edu.macalester.graphics.Line;
+import edu.macalester.graphics.Point;
+
 public class FallingGestures extends GraphicsGroup {
     private final double speed;
-    public double size;
+    private double size;
+    // private GestureTemplate template;
 
     public FallingGestures(GestureTemplate template, double canvasWidth, double shapeSize) {
-        this.size = shapeSize;              
+        this.size = shapeSize;
+        // this.template = template;
         double x = 50 + Math.random() * (canvasWidth - 100);
         double y = -size - 10;
 
@@ -38,4 +40,8 @@ public class FallingGestures extends GraphicsGroup {
         moveBy(0, speed * x);
         return getY() < canvasHeight;
     }
+
+    //public GestureTemplate getTemplate() or public List<Point> getCurrPoints
+
+    
 }
