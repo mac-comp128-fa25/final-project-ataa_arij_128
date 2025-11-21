@@ -1,14 +1,11 @@
 package comp128.gestureRush;
 
-import java.awt.Color;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-import java.util.Random;
-
 import edu.macalester.graphics.CanvasWindow;
 import edu.macalester.graphics.Point;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class GestureRushGame {
 
@@ -16,7 +13,6 @@ public class GestureRushGame {
     private FallingGestures currentGesture;
     private final List<GestureTemplate> templates;
     private final Random rand = new Random();
-    private Deque<Point> appDeque; //Deque that stores the points appended from the traced gesture (might be moved to Score class)
 
     private double shapeSize = 90;
 
@@ -27,16 +23,9 @@ public class GestureRushGame {
         templates.add(createArrow());
         templates.add(createCircle());
         templates.add(createTriangle());
-        appDeque = new ArrayDeque<>();
 
         spawnNext();
         canvas.animate(this::update);
-        canvas.onDrag(event -> {
-            if (event.getPosition().equals(currentGesture.getPosition()))
-            appDeque.push(event.getPosition());
-            // removeGesturePoint
-            
-        });
     }
 
     private void spawnNext() {
@@ -58,14 +47,26 @@ public class GestureRushGame {
             }
         }
     }
+    
+    private void addLinePoints(List<Point> lineseg,double x1, double y1, double x2, double y2,int steps){
+        for (int i = 0; i <= steps; i++) {
+        double t = i / (double) steps;
+        double x = x1 + t * (x2 - x1);
+        double y = y1 + t * (y2 - y1);
+        lineseg.add(new Point(x, y));
+    }
+
+    }
+                            
 
     private GestureTemplate createArrow() {
-        ArrayList<Point> arrowPoint = new ArrayList<>();
-        arrowPoint.add(new Point(50, 10)); arrowPoint.add(new Point(50, 70));
-        arrowPoint.add(new Point(50, 10)); arrowPoint.add(new Point(30, 30));
-        arrowPoint.add(new Point(50, 10)); arrowPoint.add(new Point(70, 30)); 
-        return new GestureTemplate("arrow", arrowPoint);
-    }
+    ArrayList<Point> arrowPoints = new ArrayList<>();
+    addLinePoints(arrowPoints, 50, 10, 50, 70, 24); 
+    addLinePoints(arrowPoints, 50, 10, 30, 30, 16);
+    addLinePoints(arrowPoints, 50, 10, 70, 30, 16);  
+    return new GestureTemplate("arrow", arrowPoints);
+}
+
 
     private GestureTemplate createCircle() {
         ArrayList<Point> circlePoints = new ArrayList<>();
@@ -79,21 +80,14 @@ public class GestureRushGame {
     }
 
     private GestureTemplate createTriangle() {
-        ArrayList<Point> trianglePoints = new ArrayList<>();
-        trianglePoints.add(new Point(50, 10));
-        trianglePoints.add(new Point(15, 80));
-        trianglePoints.add(new Point(85, 80));
-        trianglePoints.add(new Point(50, 10));
-        return new GestureTemplate("triangle", trianglePoints);
-    }
+    ArrayList<Point> trianglePoints = new ArrayList<>();
+    double xTop = 50, yTop = 10;
+    double xLeft = 15, yLeft = 80;
+    double xRight = 85, yRight = 80;
+    addLinePoints(trianglePoints, xTop,  yTop,  xLeft,  yLeft, 24);
+    addLinePoints(trianglePoints, xLeft, yLeft, xRight, yRight, 24);
+    addLinePoints(trianglePoints, xRight, yRight, xTop,  yTop, 24);
+    return new GestureTemplate("triangle", trianglePoints);
+}
 
-    /*
-     * Helper method 
-     * removes the point from the gesture that the mouse is clicking on
-     */
-    private boolean removeGesturePoint(){
-        return false;
-        //List<Point> gesturePoints = currentGesture.getTemplate().getPoints(); 
-        
-    }
 }
