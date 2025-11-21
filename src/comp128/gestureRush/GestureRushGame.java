@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import comp128.gestureRush.PlayerEraser.EraseCallback;
+
 public class GestureRushGame {
 
     private final CanvasWindow canvas;
@@ -15,6 +17,10 @@ public class GestureRushGame {
     private final Random rand = new Random();
 
     private double shapeSize = 90;
+    private PlayerEraser eraser;
+    private EraseCallback callback;
+    private double eraserRadius = 10;
+    private ArrayList<Point> removedLog;
 
     public GestureRushGame() {
         canvas = new CanvasWindow("Gesture Rush", 600, 600);
@@ -23,6 +29,24 @@ public class GestureRushGame {
         templates.add(createArrow());
         templates.add(createCircle());
         templates.add(createTriangle());
+
+        //callback = (x,)
+
+
+       eraser = new PlayerEraser(canvas, (p, r) -> {
+           System.out.println("GestureRushGame: erase requested at " + p);
+           if (currentGesture == null) return 0;
+           int removed = currentGesture.eraseAt(p, r, removedLog);
+           if (removed > 0 && currentGesture.isFullyErased()) {
+               canvas.remove(currentGesture);
+               currentGesture = null;
+               spawnNext();
+           }
+           return removed;
+       }, eraserRadius);
+
+
+
 
         spawnNext();
         canvas.animate(this::update);

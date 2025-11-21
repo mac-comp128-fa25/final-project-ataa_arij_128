@@ -3,65 +3,58 @@ package comp128.gestureRush;
 import edu.macalester.graphics.CanvasWindow;
 import edu.macalester.graphics.Ellipse;
 import edu.macalester.graphics.Point;
-
 import java.awt.Color;
 
 public class PlayerEraser {
 
     public interface EraseCallback {
-        int onEraseAt(Point absolutePoint, double radius);
+        int onErase(Point p, double r);
     }
 
+
+    
     private final CanvasWindow canvas;
-    private final EraseCallback callback;
-    private final double radius;
+    private final EraseCallback erasePoints;
+    public final double radius;
+    private final Ellipse eraserRing;
+    private boolean isMouseDown = false;
 
-    private final Ellipse ring;
-    private boolean mouseDown = false;
-
-    public PlayerEraser(CanvasWindow canvas, EraseCallback callback, double radius) {
+    public PlayerEraser(CanvasWindow canvas, EraseCallback c, double radius){
         this.canvas = canvas;
-        this.callback = callback;
+        this.erasePoints = c;
         this.radius = radius;
+        this.eraserRing = new Ellipse(0,0, radius * 2, radius * 2);
+        eraserRing.setStrokeColor(Color.RED);
+        //eraserRing.setFillColor(Color.BLACK);
+        canvas.add(eraserRing);
+        eraserEvents();
 
-        ring = new Ellipse(0, 0, radius * 2, radius * 2);
-        ring.setStrokeColor(new Color(0, 100, 255, 160));
-        ring.setFillColor(new Color(0, 0, 0, 0));
-        canvas.add(ring);
 
-        hookEvents();
     }
 
-    private void hookEvents() {
-        // Always move the ring with the mouse
-        canvas.onMouseMove(e -> {
-            Point p = e.getPosition();
-            ring.setCenter(p.getX(), p.getY());
-        });
-
-        // Start erasing on mouse down (still supports single click)
+    private void eraserEvents(){
         canvas.onMouseDown(e -> {
-            mouseDown = true;
             Point p = e.getPosition();
-            ring.setCenter(p.getX(), p.getY());
-            int removed = callback.onEraseAt(p, radius);
-            if (removed > 0) {
-                System.out.println("onMouseDown erased " + removed + " segments at " + p);
+            eraserRing.setCenter(p.getX(), p.getY());
+        });
+        canvas.onMouseDown(e -> {
+            isMouseDown = true;
+            Point p = e.getPosition();
+            eraserRing.setPosition(p.getX(), p.getY());
+            int removed = erasePoints.onErase(p, radius);});
+
+        canvas.onDrag(e ->{
+            if (!isMouseDown){
+                return;
             }
+            Point p = e.getPosition();
+            eraserRing.setCenter(p.getX(), p.getY());
+            int removed = erasePoints.onErase(p,radius);
+
         });
 
-        // While mouse is held and dragged, erase continuously
-        canvas.onDrag(e -> {
-            if (!mouseDown) return;   // safety, probably always true during drag
-            Point p = e.getPosition();
-            ring.setCenter(p.getX(), p.getY());
-            int removed = callback.onEraseAt(p, radius);
-            if (removed > 0) {
-                System.out.println("onDrag erased " + removed + " segments at " + p);
-            }
-        });
+        canvas.onMouseUp( e -> isMouseDown = false);
 
-        // Stop erasing when mouse button is released
-        canvas.onMouseUp(e -> mouseDown = false);
-    }
+
+}
 }

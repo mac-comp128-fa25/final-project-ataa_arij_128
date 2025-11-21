@@ -1,6 +1,7 @@
 package comp128.gestureRush; 
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.macalester.graphics.GraphicsGroup;
@@ -11,12 +12,15 @@ public class FallingGestures extends GraphicsGroup {
     private final double speed;
     private double size;
     // private GestureTemplate template;
+    private ArrayList<Line> segments = new ArrayList<>();
+    private int aliveSegments;
 
     public FallingGestures(GestureTemplate template, double canvasWidth, double shapeSize) {
         this.size = shapeSize;
         // this.template = template;
         double x = 50 + Math.random() * (canvasWidth - 100);
         double y = -size - 10;
+        this.aliveSegments = segments.size();
 
         List<Point> templatePoints = template.getPoints();
         if (templatePoints != null && templatePoints.size() > 1) {
@@ -40,8 +44,68 @@ public class FallingGestures extends GraphicsGroup {
         moveBy(0, speed * x);
         return getY() < canvasHeight;
     }
-
-    //public GestureTemplate getTemplate() or public List<Point> getCurrPoints
-
     
+    public int eraseAt(Point pAbs, double radius, List<Point> removedSink) {
+    if (aliveSegments <= 0) return 0;
+
+
+    double px = pAbs.getX() - getX();
+    double py = pAbs.getY() - getY();
+    double r2 = radius * radius;
+
+    int removed = 0;
+
+    for (int i = 0; i < segments.size(); i++) {
+        Line seg = segments.get(i);
+        if (seg == null) continue;
+
+        double ax = seg.getX1(), ay = seg.getY1();
+        double bx = seg.getX2(), by = seg.getY2();
+        double distSq = distanceToSegmentSquared(px, py, ax, ay, bx, by);
+        if (distSq <= r2) {
+            remove(seg);
+            segments.set(i, null);
+            aliveSegments--;
+            removed++;
+            double mx = (ax + bx) * 0.5 + getX();
+            double my = (ay + by) * 0.5 + getY();
+            removedSink.add(new Point(mx, my));
+        }
+    }
+
+    if (removed > 0) {
+        System.out.println("FallingGestures.eraseAt: removed " + removed + " segments");
+    }
+    return removed;
+}  
+private static double distanceToSegmentSquared(double px, double py,
+                                               double ax, double ay,
+                                               double bx, double by) {
+
+    double abx = bx - ax;
+    double aby = by - ay;
+    double apx = px - ax;
+    double apy = py - ay;
+    double abLengthSq = abx * abx + aby * aby;
+    if (abLengthSq == 0) {
+        double dx = px - ax;
+        double dy = py - ay;
+        return dx * dx + dy * dy;
+    }
+    double t = (apx * abx + apy * aby) / abLengthSq;
+    if (t < 0) {
+        t = 0;
+    } else if (t > 1) {
+        t = 1;
+    }
+    double closestX = ax + t * abx;
+    double closestY = ay + t * aby;
+    double dx = px - closestX;
+    double dy = py - closestY;
+    return dx * dx + dy * dy;
+}
+
+public boolean isFullyErased(){
+    return aliveSegments <= 0;
+}
 }
