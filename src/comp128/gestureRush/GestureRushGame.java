@@ -18,9 +18,8 @@ public class GestureRushGame {
 
     private double shapeSize = 90;
     private PlayerEraser eraser;
-    private EraseCallback callback;
-    private double eraserRadius = 10;
-    private ArrayList<Point> removedLog;
+    private double eraserRadius = 5;
+    private final ArrayList<Point> removedLog = new ArrayList<>();
 
     public GestureRushGame() {
         canvas = new CanvasWindow("Gesture Rush", 600, 600);
@@ -30,23 +29,17 @@ public class GestureRushGame {
         templates.add(createCircle());
         templates.add(createTriangle());
 
-        //callback = (x,)
-
-
-       eraser = new PlayerEraser(canvas, (p, r) -> {
-           System.out.println("GestureRushGame: erase requested at " + p);
-           if (currentGesture == null) return 0;
-           int removed = currentGesture.eraseAt(p, r, removedLog);
-           if (removed > 0 && currentGesture.isFullyErased()) {
-               canvas.remove(currentGesture);
-               currentGesture = null;
-               spawnNext();
-           }
-           return removed;
-       }, eraserRadius);
-
-
-
+        eraser = new PlayerEraser(canvas, (p, r) -> {
+            System.out.println("GestureRushGame: erase requested at " + p);
+            if (currentGesture == null) return 0;
+            int removed = currentGesture.eraseAt(p, r, removedLog);
+            if (removed > 0 && currentGesture.isFullyErased()) {
+                canvas.remove(currentGesture);
+                currentGesture = null;
+                spawnNext();
+            }
+            return removed;
+        }, eraserRadius);
 
         spawnNext();
         canvas.animate(this::update);
@@ -60,8 +53,6 @@ public class GestureRushGame {
 
     private void update() {
         double dt = 0.025;
-        // if we cant to decrease shape size as it falls shapeSize *= 0.95 * dt;
-
         if (currentGesture != null) {
             boolean stillOn = currentGesture.update(dt, canvas.getHeight());
             if (!stillOn) {

@@ -11,8 +11,6 @@ public class PlayerEraser {
         int onErase(Point p, double r);
     }
 
-
-    
     private final CanvasWindow canvas;
     private final EraseCallback erasePoints;
     public final double radius;
@@ -23,38 +21,35 @@ public class PlayerEraser {
         this.canvas = canvas;
         this.erasePoints = c;
         this.radius = radius;
-        this.eraserRing = new Ellipse(0,0, radius * 2, radius * 2);
+
+        this.eraserRing = new Ellipse(0, 0, radius * 2, radius * 2);
         eraserRing.setStrokeColor(Color.RED);
-        //eraserRing.setFillColor(Color.BLACK);
+        eraserRing.setFillColor(new Color(0, 0, 0, 0));
         canvas.add(eraserRing);
-        eraserEvents();
 
-
+        hookEvents();
     }
 
-    private void eraserEvents(){
-        canvas.onMouseDown(e -> {
-            Point p = e.getPosition();
-            eraserRing.setCenter(p.getX(), p.getY());
-        });
+    private void hookEvents(){
         canvas.onMouseDown(e -> {
             isMouseDown = true;
             Point p = e.getPosition();
-            eraserRing.setPosition(p.getX(), p.getY());
-            int removed = erasePoints.onErase(p, radius);});
-
-        canvas.onDrag(e ->{
-            if (!isMouseDown){
-                return;
+            eraserRing.setCenter(p.getX(), p.getY());
+            int removed = erasePoints.onErase(p, radius);
+            if (removed > 0) {
+                System.out.println("removed " + removed);
             }
+        });
+        canvas.onDrag(e -> {
+            if (!isMouseDown) return;
             Point p = e.getPosition();
             eraserRing.setCenter(p.getX(), p.getY());
-            int removed = erasePoints.onErase(p,radius);
-
+            int removed = erasePoints.onErase(p, radius);
+            if (removed > 0) {
+                System.out.println("removed " + removed);
+            }
         });
 
-        canvas.onMouseUp( e -> isMouseDown = false);
-
-
-}
+        canvas.onMouseUp(e -> isMouseDown = false);
+    }
 }
