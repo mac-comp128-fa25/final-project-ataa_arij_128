@@ -75,9 +75,9 @@ public class FallingGestures extends GraphicsGroup {
             }
         }
 
-        if (removed > 0) {
-            System.out.println("FallingGestures.eraseAt removed " + removed + " segments");
-        }
+        // if (removed > 0) {
+        //     // System.out.println("FallingGestures.eraseAt removed " + removed + " segments");
+        // }
         return removed;
     }  
 

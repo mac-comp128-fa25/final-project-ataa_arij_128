@@ -1,13 +1,14 @@
 package comp128.gestureRush;
 
-import edu.macalester.graphics.CanvasWindow;
-import edu.macalester.graphics.Point;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import comp128.gestureRush.PlayerEraser.EraseCallback;
+import edu.macalester.graphics.CanvasWindow;
+import edu.macalester.graphics.Point;
 
 public class GestureRushGame {
 
@@ -20,8 +21,20 @@ public class GestureRushGame {
     private PlayerEraser eraser;
     private double eraserRadius = 5;
     private final ArrayList<Point> removedLog = new ArrayList<>();
+    private Timer timer;
+    private TimerTask task; // 1 timer for number of gestures falling, another for which gestures falling
 
     public GestureRushGame() {
+        timer = new Timer();
+        task = new TimerTask() { // Currently has no effect, after certain amount of time more gestures start falling
+            @Override
+            public void run(){
+                GestureTemplate g = templates.get(rand.nextInt(templates.size()));
+                FallingGestures nextGesture = new FallingGestures(g, eraserRadius, shapeSize);
+                canvas.add(nextGesture);
+            }
+        };
+        timer.schedule(task, 2000); // Delay will be 15000 (15 seconds) 
         canvas = new CanvasWindow("Gesture Rush", 600, 600);
         canvas.setBackground(Color.WHITE);
         templates = new ArrayList<>();
@@ -30,7 +43,6 @@ public class GestureRushGame {
         templates.add(createTriangle());
 
         eraser = new PlayerEraser(canvas, (p, r) -> {
-            System.out.println("GestureRushGame: erase requested at " + p);
             if (currentGesture == null) return 0;
             int removed = currentGesture.eraseAt(p, r, removedLog);
             if (removed > 0 && currentGesture.isFullyErased()) {
