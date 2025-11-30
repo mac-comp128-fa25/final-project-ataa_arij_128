@@ -13,9 +13,19 @@ public class GestureTemplate {
         this.NAME = name;
         this.POINTS = points;
     }
+    
+    /**
+     * name getter
+     * @return NAME
+     */
     public String getNAME() { 
         return NAME; 
     }
+    
+    /**
+     * returns points that make up gesture
+     * @return
+     */
     public List<Point> getPOINTS() { 
         return POINTS; 
     }
@@ -24,6 +34,11 @@ public class GestureTemplate {
         // We can delete this right
     // }
     
+    /**
+     * (what does this method do)
+     * @param p
+     * @return
+     */
     public boolean checkifTrue(Point p){
         return false;
     }

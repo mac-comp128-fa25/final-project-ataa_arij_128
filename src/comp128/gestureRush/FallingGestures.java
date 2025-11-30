@@ -41,11 +41,24 @@ public class FallingGestures extends GraphicsGroup {
         SPEED = 120 + Math.random() * 78;
     }
 
+    /**
+     * Method to update the position of the falling gesture
+     * @param dt 
+     * @param canvasHeight
+     * @return Y less then canvas height
+     */
     public boolean update(double dt, double canvasHeight) {
         moveBy(0, SPEED * dt);
         return getY() < canvasHeight;
     }
     
+    /**
+     * Method for erased points of fallen gesture
+     * @param pAbs
+     * @param radius
+     * @param removedSink
+     * @return
+     */
     public int eraseAt(Point pAbs, double radius, List<Point> removedSink) {
         if (aliveSegments <= 0) return 0;
 
@@ -110,6 +123,10 @@ public class FallingGestures extends GraphicsGroup {
         return dx * dx + dy * dy;
     }
 
+    /**
+     * Method tells if Falling gesture has been fully erased
+     * @return alive segments
+     */
     public boolean isFullyErased() {
         return aliveSegments <= 0;
     }

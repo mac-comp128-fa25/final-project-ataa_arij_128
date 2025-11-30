@@ -31,6 +31,9 @@ public class PlayerEraser {
         hookEvents();
     }
 
+    /**
+     * Erases points from gesture
+     */
     private void hookEvents(){
         CANVAS.onMouseDown(e -> {
             isMouseDown = true;

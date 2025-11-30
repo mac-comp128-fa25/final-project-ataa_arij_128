@@ -1,10 +1,10 @@
 package comp128.gestureRush;
 
+import java.awt.Color;
+
 import edu.macalester.graphics.CanvasWindow;
 import edu.macalester.graphics.GraphicsText;
 import edu.macalester.graphics.ui.Button;
-
-import java.awt.Color;
 
 public class Menu {
 
@@ -16,6 +16,9 @@ public class Menu {
         setupUI();
     }
 
+    /**
+     * sets up menu screen
+     */
     private void setupUI() {
         canvas.setBackground(Color.BLACK);
 

@@ -60,12 +60,18 @@ public class GestureRushGame {
         CANVAS.animate(this::update);
     }
 
+    /**
+     * Method for getting new gestures to start falling down the screen
+     */
     private void spawnNext() {
         GestureTemplate t = TEMPLATES.get(rand.nextInt(TEMPLATES.size()));
         currentGesture = new FallingGestures(t, CANVAS.getWidth(), shapeSize);
         CANVAS.add(currentGesture);
     }
 
+    /**
+     * updates the position of the falling gesture and spawns the next gesture once the current gesture no longer exists
+     */
     private void update() {
         double dt = 0.025;
         if (currentGesture != null) {
@@ -78,6 +84,15 @@ public class GestureRushGame {
         }
     }
     
+    /**
+     * helper method that creates line segments between points (is this accurate)
+     * @param lineseg
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param steps
+     */
     private void addLinePoints(List<Point> lineseg, double x1, double y1, double x2, double y2, int steps){
         for (int i = 0; i <= steps; i++) {
         double t = i / (double) steps;
@@ -88,6 +103,10 @@ public class GestureRushGame {
     }
                             
 
+    /**
+     * creates arrow gesture
+     * @return arrow template
+     */
     private GestureTemplate createArrow() {
         ArrayList<Point> arrowPoints = new ArrayList<>(); // Data structure question to consider, will the program run whether these are stored in lists or deques, will time complexity change if stored in diff. structure
         addLinePoints(arrowPoints, 50, 10, 50, 70, 24); 
@@ -97,6 +116,10 @@ public class GestureRushGame {
     }
 
 
+    /**
+     * creates circle gesture
+     * @return circle template
+     */
     private GestureTemplate createCircle() {
         ArrayList<Point> circlePoints = new ArrayList<>();
         double cx = 50, cy = 50, r = 35;
@@ -108,6 +131,10 @@ public class GestureRushGame {
         return new GestureTemplate("circle", circlePoints);
     }
 
+    /**
+     * creates triangle gesture
+     * @return triangle template
+     */
     private GestureTemplate createTriangle() {
         ArrayList<Point> trianglePoints = new ArrayList<>();
         double xTop = 50, yTop = 10;
