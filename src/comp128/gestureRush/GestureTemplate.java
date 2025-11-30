@@ -6,23 +6,23 @@ import java.util.List;
 import edu.macalester.graphics.Point;
 
 public class GestureTemplate {
-    private final String name;
-    private final ArrayList<Point> points;
+    private final String NAME;
+    private final ArrayList<Point> POINTS;
 
     public GestureTemplate(String name, ArrayList<Point> points) {
-        this.name = name;
-        this.points = points;
+        this.NAME = name;
+        this.POINTS = points;
     }
-    public String getName() { 
-        return name; 
+    public String getNAME() { 
+        return NAME; 
     }
-    public List<Point> getPoints() { 
-        return points; 
+    public List<Point> getPOINTS() { 
+        return POINTS; 
     }
 
-    public void removePoint(){
-        
-    }
+    // public void removePoint(){
+        // We can delete this right
+    // }
     
     public boolean checkifTrue(Point p){
         return false;
