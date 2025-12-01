@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.macalester.graphics.CanvasWindow;
+import edu.macalester.graphics.GraphicsText;
 import edu.macalester.graphics.Point;
 
 public class GestureRushGame {
@@ -21,6 +22,7 @@ public class GestureRushGame {
     private PlayerEraser eraser;
     private double eraserRadius = 5;
     private final ArrayList<Point> removedLog = new ArrayList<>(); // won't this list be changing (should it be final)
+    private GraphicsText scoreText;
     private Timer timer;
     private TimerTask task; // 1 timer for number of gestures falling, another for which gestures falling
     //private Deque<FallingGestures> currentGestures; // Deque that stores the current gestures
@@ -55,7 +57,11 @@ public class GestureRushGame {
             // System.out.println(removedLog);
             return removed;
         }, eraserRadius);
-
+        
+        scoreText = new GraphicsText("Score: ", 10, 30);
+        scoreText.setFontSize(32);
+        scoreText.setFillColor(Color.BLUE);
+        CANVAS.add(scoreText);
         spawnNext();
         CANVAS.animate(this::update);
     }
@@ -82,6 +88,7 @@ public class GestureRushGame {
                 spawnNext();
             }
         }
+        scoreText.setText("Score: " + eraser.getRemovedPoints());
     }
     
     /**
