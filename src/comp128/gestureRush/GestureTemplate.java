@@ -6,24 +6,39 @@ import java.util.List;
 import edu.macalester.graphics.Point;
 
 public class GestureTemplate {
-    private final String name;
-    private final ArrayList<Point> points;
+    private final String NAME;
+    private final ArrayList<Point> POINTS;
 
     public GestureTemplate(String name, ArrayList<Point> points) {
-        this.name = name;
-        this.points = points;
-    }
-    public String getName() { 
-        return name; 
-    }
-    public List<Point> getPoints() { 
-        return points; 
-    }
-
-    public void removePoint(){
-        
+        this.NAME = name;
+        this.POINTS = points;
     }
     
+    /**
+     * name getter
+     * @return NAME
+     */
+    public String getNAME() { 
+        return NAME; 
+    }
+    
+    /**
+     * returns points that make up gesture
+     * @return
+     */
+    public List<Point> getPOINTS() { 
+        return POINTS; 
+    }
+
+    // public void removePoint(){
+        // We can delete this right
+    // }
+    
+    /**
+     * (what does this method do)
+     * @param p
+     * @return
+     */
     public boolean checkifTrue(Point p){
         return false;
     }

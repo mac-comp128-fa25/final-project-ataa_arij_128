@@ -1,9 +1,10 @@
 package comp128.gestureRush;
 
+import java.awt.Color;
+
 import edu.macalester.graphics.CanvasWindow;
 import edu.macalester.graphics.Ellipse;
 import edu.macalester.graphics.Point;
-import java.awt.Color;
 
 public class PlayerEraser {
 
@@ -11,45 +12,48 @@ public class PlayerEraser {
         int onErase(Point p, double r);
     }
 
-    private final CanvasWindow canvas;
-    private final EraseCallback erasePoints;
-    public final double radius;
-    private final Ellipse eraserRing;
+    private final CanvasWindow CANVAS;
+    private final EraseCallback POINTS; //erase points
+    public final double RADIUS;
+    private final Ellipse RING;
     private boolean isMouseDown = false;
 
     public PlayerEraser(CanvasWindow canvas, EraseCallback c, double radius){
-        this.canvas = canvas;
-        this.erasePoints = c;
-        this.radius = radius;
+        this.CANVAS = canvas;
+        this.POINTS = c;
+        this.RADIUS = radius;
 
-        this.eraserRing = new Ellipse(0, 0, radius * 2, radius * 2);
-        eraserRing.setStrokeColor(Color.RED);
-        eraserRing.setFillColor(new Color(0, 0, 0, 0));
-        canvas.add(eraserRing);
+        this.RING = new Ellipse(0, 0, radius * 2, radius * 2);
+        RING.setStrokeColor(Color.RED);
+        RING.setFillColor(new Color(0, 0, 0, 0));
+        canvas.add(RING);
 
         hookEvents();
     }
 
+    /**
+     * Erases points from gesture
+     */
     private void hookEvents(){
-        canvas.onMouseDown(e -> {
+        CANVAS.onMouseDown(e -> {
             isMouseDown = true;
             Point p = e.getPosition();
-            eraserRing.setCenter(p.getX(), p.getY());
-            int removed = erasePoints.onErase(p, radius);
+            RING.setCenter(p.getX(), p.getY());
+            int removed = POINTS.onErase(p, RADIUS); // shows amount of points removed on single erase
             if (removed > 0) {
-                System.out.println("removed " + removed);
+                System.out.println("removed " + removed); 
             }
         });
-        canvas.onDrag(e -> {
+        CANVAS.onDrag(e -> {
             if (!isMouseDown) return;
             Point p = e.getPosition();
-            eraserRing.setCenter(p.getX(), p.getY());
-            int removed = erasePoints.onErase(p, radius);
+            RING.setCenter(p.getX(), p.getY());
+            int removed = POINTS.onErase(p, RADIUS);
             if (removed > 0) {
-                System.out.println("removed " + removed);
+                System.out.println("removed " + removed); 
             }
         });
 
-        canvas.onMouseUp(e -> isMouseDown = false);
+        CANVAS.onMouseUp(e -> isMouseDown = false);
     }
 }

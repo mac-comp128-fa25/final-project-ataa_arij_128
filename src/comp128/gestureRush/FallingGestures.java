@@ -9,9 +9,9 @@ import edu.macalester.graphics.Line;
 import edu.macalester.graphics.Point;
 
 public class FallingGestures extends GraphicsGroup {
-    private final double speed;
+    private final double SPEED;
     private double size;
-    private final ArrayList<Line> segments = new ArrayList<>();
+    private final ArrayList<Line> SEGMENTS = new ArrayList<>();
     private int aliveSegments;
 
     public FallingGestures(GestureTemplate template, double canvasWidth, double shapeSize) {
@@ -20,7 +20,7 @@ public class FallingGestures extends GraphicsGroup {
         double x = 50 + Math.random() * (canvasWidth - 100);
         double y = -size - 10;
 
-        List<Point> templatePoints = template.getPoints();
+        List<Point> templatePoints = template.getPOINTS();
         if (templatePoints != null && templatePoints.size() > 1) {
             for (int i = 0; i < templatePoints.size() - 1; i++) {
                 Point point1 = templatePoints.get(i);
@@ -31,21 +31,34 @@ public class FallingGestures extends GraphicsGroup {
                 );
                 gestureLine.setStrokeColor(Color.BLACK);
                 gestureLine.setStrokeWidth(6);
-                segments.add(gestureLine);
+                SEGMENTS.add(gestureLine);
                 add(gestureLine);
             }
         }
-        aliveSegments = segments.size();
+        aliveSegments = SEGMENTS.size();
 
         setPosition(x, y);
-        speed = 120 + Math.random() * 78;
+        SPEED = 120 + Math.random() * 78;
     }
 
+    /**
+     * Method to update the position of the falling gesture
+     * @param dt 
+     * @param canvasHeight
+     * @return Y less then canvas height
+     */
     public boolean update(double dt, double canvasHeight) {
-        moveBy(0, speed * dt);
+        moveBy(0, SPEED * dt);
         return getY() < canvasHeight;
     }
     
+    /**
+     * Method for erased points of fallen gesture
+     * @param pAbs
+     * @param radius
+     * @param removedSink
+     * @return
+     */
     public int eraseAt(Point pAbs, double radius, List<Point> removedSink) {
         if (aliveSegments <= 0) return 0;
 
@@ -55,8 +68,8 @@ public class FallingGestures extends GraphicsGroup {
 
         int removed = 0;
 
-        for (int i = 0; i < segments.size(); i++) {
-            Line seg = segments.get(i);
+        for (int i = 0; i < SEGMENTS.size(); i++) {
+            Line seg = SEGMENTS.get(i);
             if (seg == null) continue;
 
             double ax = seg.getX1(), ay = seg.getY1();
@@ -65,7 +78,7 @@ public class FallingGestures extends GraphicsGroup {
             double distSq = distanceToSegmentSquared(px, py, ax, ay, bx, by);
             if (distSq <= r2) {
                 remove(seg);
-                segments.set(i, null);
+                SEGMENTS.set(i, null);
                 aliveSegments--;
                 removed++;
 
@@ -110,6 +123,10 @@ public class FallingGestures extends GraphicsGroup {
         return dx * dx + dy * dy;
     }
 
+    /**
+     * Method tells if Falling gesture has been fully erased
+     * @return alive segments
+     */
     public boolean isFullyErased() {
         return aliveSegments <= 0;
     }
