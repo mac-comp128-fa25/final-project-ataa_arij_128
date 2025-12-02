@@ -23,10 +23,14 @@ public class GestureRushGame {
     private double eraserRadius = 5;
     private final ArrayList<Point> removedLog = new ArrayList<>(); // won't this list be changing (should it be final)
     private GraphicsText scoreText;
+    private GraphicsText prevScoreText;
+    private GraphicsText highScoreText;
     private Timer timer;
     private TimerTask task; // 1 timer for number of gestures falling, another for which gestures falling
     //private Deque<FallingGestures> currentGestures; // Deque that stores the current gestures
     //private int numGestures;
+    private int[] scores; //Data Structure that stores the scores. Must choose most efficient structue
+    private int missedPoints; 
 
     public GestureRushGame() {
        // currentGestures = new ArrayDeque<>();
@@ -54,14 +58,31 @@ public class GestureRushGame {
                 currentGesture = null;
                 spawnNext();
             }
+            // if (removed > 0 && !currentGesture.isFullyErased()){
+            //     currentGesture.getTemplate().getPoints().size();
+            // }
             // System.out.println(removedLog);
             return removed;
         }, eraserRadius);
+
+        missedPoints = 0;
         
         scoreText = new GraphicsText("Score: ", 10, 30);
         scoreText.setFontSize(32);
         scoreText.setFillColor(Color.BLUE);
+
+        prevScoreText = new GraphicsText("Previous: ", CANVAS.getWidth()/3, 30);
+        prevScoreText.setFontSize(32);
+        prevScoreText.setFillColor(Color.BLUE);
+
+        highScoreText = new GraphicsText("High: ", CANVAS.getWidth() - 200, 30);
+        highScoreText.setFontSize(32);
+        highScoreText.setFillColor(Color.BLUE);
+
         CANVAS.add(scoreText);
+        CANVAS.add(prevScoreText);
+        CANVAS.add(highScoreText);
+
         spawnNext();
         CANVAS.animate(this::update);
     }
@@ -82,8 +103,11 @@ public class GestureRushGame {
         double dt = 0.025;
         if (currentGesture != null) {
             boolean stillOn = currentGesture.update(dt, CANVAS.getHeight());
+
             if (!stillOn) {
                 CANVAS.remove(currentGesture);
+                missedPoints = currentGesture.getTemplate().getPoints().size() - eraser.getRemovedPoints(); //Subtracting by total removed points needs to be gesture by gesture
+                System.out.println("Missed Points: " + missedPoints);
                 currentGesture = null;
                 spawnNext();
             }
@@ -118,7 +142,7 @@ public class GestureRushGame {
         ArrayList<Point> arrowPoints = new ArrayList<>(); // Data structure question to consider, will the program run whether these are stored in lists or deques, will time complexity change if stored in diff. structure
         addLinePoints(arrowPoints, 50, 10, 50, 70, 24); 
         addLinePoints(arrowPoints, 50, 10, 30, 30, 16);
-        addLinePoints(arrowPoints, 50, 10, 70, 30, 16);  
+        addLinePoints(arrowPoints, 50, 10, 70, 30, 16); 
         return new GestureTemplate("arrow", arrowPoints);
     }
 
@@ -152,5 +176,10 @@ public class GestureRushGame {
         addLinePoints(trianglePoints, xRight, yRight, xTop,  yTop, 24);
         return new GestureTemplate("triangle", trianglePoints);
     }
+
+    // method for end game 
+    // add score to scores
+
+    // Arrow has 59 points, Circle has 33, Triangle has 75
 
 }

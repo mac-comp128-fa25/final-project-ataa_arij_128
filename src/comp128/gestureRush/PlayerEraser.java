@@ -52,14 +52,14 @@ public class PlayerEraser {
             RING.setCenter(p.getX(), p.getY());
             int removed = POINTS.onErase(p, RADIUS);
             if (removed > 0) {
-                System.out.println("removed " + removed);
+                //System.out.println("removed " + removed);
                 numRemovedPoints += removed; 
             }
         });
 
         CANVAS.onMouseUp(e -> {
             isMouseDown = false;
-            System.out.println("Total Removed Points: " + numRemovedPoints);
+            //System.out.println("Total Removed Points: " + numRemovedPoints);
         });
     }
 

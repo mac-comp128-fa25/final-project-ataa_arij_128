@@ -13,14 +13,16 @@ public class FallingGestures extends GraphicsGroup {
     private double size;
     private final ArrayList<Line> SEGMENTS = new ArrayList<>();
     private int aliveSegments;
+    private GestureTemplate template;
 
     public FallingGestures(GestureTemplate template, double canvasWidth, double shapeSize) {
         this.size = shapeSize;
+        this.template = template;
 
         double x = 50 + Math.random() * (canvasWidth - 100);
         double y = -size - 10;
 
-        List<Point> templatePoints = template.getPOINTS();
+        List<Point> templatePoints = template.getPoints();
         if (templatePoints != null && templatePoints.size() > 1) {
             for (int i = 0; i < templatePoints.size() - 1; i++) {
                 Point point1 = templatePoints.get(i);
@@ -129,5 +131,9 @@ public class FallingGestures extends GraphicsGroup {
      */
     public boolean isFullyErased() {
         return aliveSegments <= 0;
+    }
+
+    public GestureTemplate getTemplate(){
+        return template;
     }
 }

@@ -18,7 +18,7 @@ public class GestureTemplate {
      * name getter
      * @return NAME
      */
-    public String getNAME() { 
+    public String getName() { 
         return NAME; 
     }
     
@@ -26,7 +26,7 @@ public class GestureTemplate {
      * returns points that make up gesture
      * @return
      */
-    public List<Point> getPOINTS() { 
+    public List<Point> getPoints() { 
         return POINTS; 
     }
 
