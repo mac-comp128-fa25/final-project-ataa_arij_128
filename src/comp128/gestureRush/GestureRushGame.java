@@ -29,12 +29,14 @@ public class GestureRushGame {
     private TimerTask task; // 1 timer for number of gestures falling, another for which gestures falling
     //private Deque<FallingGestures> currentGestures; // Deque that stores the current gestures
     //private int numGestures;
-    private int[] scores; //Data Structure that stores the scores. Must choose most efficient structue
+    private int[] scores; // Data Structure that stores the scores. Must choose most efficient structue
     private int missedPoints; 
+    private Score scoreManager;
 
     public GestureRushGame() {
        // currentGestures = new ArrayDeque<>();
        // numGestures = 1;
+        scoreManager = new Score();
         timer = new Timer();
         task = new TimerTask() { // Currently has no effect, after certain amount of time more gestures start falling
             @Override
