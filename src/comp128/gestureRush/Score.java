@@ -1,80 +1,75 @@
 package comp128.gestureRush;
 
+import java.util.Queue;
+import java.util.ArrayDeque;
+
 public class Score {
-    
-    private static final int SCORE_HISTORY = 5;
-    private static final int HISTORY_SIZE = 10; // Subject to change
-    
+
+   
+    private static final int HISTORY_SIZE = 5;
     private int currentScore;
     private int topScore;
-    private gameResult[] history = new gameResult[SCORE_HISTORY];
-    private int numOfGames;
-    private int historyCount;
-    private int historyStart;
+    private final Queue<GameResult> history = new ArrayDeque<>(HISTORY_SIZE);
 
-    public Score(){
-        this.historyCount = 0;
-        this.historyStart = 0;
+    public Score() {
     }
-    
-    private void resetNewGame(){
+
+    public void resetNewGame() {
         currentScore = 0;
     }
 
-    public int getHistoryNum(){
-        return this.numOfGames;
+    public int getCurrentScore() {
+        return currentScore;
     }
 
-    public int getCurrentScore(){
-        return this.currentScore;
+    public int getTopScore() {
+        return topScore;
     }
 
-    public int getTopScore(){
-        return this.topScore;
-    }
-
-    public void calculatePoints(int erasedPoints, int totalPoints){
-        double gesturePoints = 0;
-        if (erasedPoints <= 0){
-            return; // Might not need this statement
+    public void calculatePoints(int erasedPoints, int totalPoints) {
+        if (totalPoints <= 0) {
+            return;
         }
-        else{
-            gesturePoints = erasedPoints/totalPoints;
-            gesturePoints = Math.round(gesturePoints) * 5;
-            currentScore += gesturePoints;
-        }
+        double fraction = (double) erasedPoints / totalPoints;
+        if (fraction < 0) fraction = 0;
+        if (fraction > 1) fraction = 1;
+        int gesturePoints = (int) Math.round(5.0 * fraction);
+
+        currentScore += gesturePoints;
     }
 
-    public gameResult[] getHistory() {
-        gameResult[] result = new gameResult[historyCount];
-        for (int i = 0; i < historyCount; i++) {
-            // newest is at index: (historyStart + historyCount - 1 - i) mod HISTORY_SIZE
-            int index = (historyStart + historyCount - 1 - i + HISTORY_SIZE) % HISTORY_SIZE;
-            result[i] = history[index];
-        }
-        return result;
-    }
-
-    private void addToHistory(gameResult result) {
-        if (historyCount < HISTORY_SIZE) {
-            int index = (historyStart + historyCount) % HISTORY_SIZE;
-            history[index] = result;
-            historyCount++;
-        } 
-        else {
-            history[historyStart] = result;
-            historyStart = (historyStart + 1) % HISTORY_SIZE;
-        }
-    }
-
-    public gameResult finishedGame() {
+    public GameResult finishedGame() {
         Medal medal = Medal.currScore(currentScore);
-        gameResult result = new gameResult(currentScore, medal);
+        GameResult result = new GameResult(currentScore, medal);
+
         if (currentScore > topScore) {
             topScore = currentScore;
         }
+
         addToHistory(result);
         return result;
     }
-    
+
+    public int getHistoryCount() {
+        return history.size();
+    }
+
+    public GameResult[] getHistory() {
+        int size = history.size();
+        GameResult[] result = new GameResult[size];
+        int i = size - 1;
+        for (GameResult gr : history) {
+            result[i] = gr;
+            i--;
+        }
+        return result;
+    }
+
+   
+    private void addToHistory(GameResult result) {
+        if (history.size() == HISTORY_SIZE) {
+            history.poll();   // O(1)
+        }
+        history.offer(result); // O(1), add at tail
+    }
 }

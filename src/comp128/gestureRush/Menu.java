@@ -50,6 +50,7 @@ public class Menu {
 
         startButton.onClick(() -> {
             canvas.closeWindow();
+            Score scoreManager = new Score();
             new GestureRushGame();  
         });
     }

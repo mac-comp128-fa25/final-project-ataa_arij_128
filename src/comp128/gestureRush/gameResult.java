@@ -1,11 +1,11 @@
 package comp128.gestureRush;
 
-public class gameResult {
+public class GameResult {
 
     private final int score;
     private final Medal medal;
 
-    public gameResult(int score, Medal medal) {
+    public GameResult(int score, Medal medal) {
         this.score = score;
         this.medal = medal;
     }
