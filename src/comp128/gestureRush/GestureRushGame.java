@@ -25,13 +25,16 @@ public class GestureRushGame {
     private GraphicsText scoreText;
     private GraphicsText prevScoreText;
     private GraphicsText highScoreText;
+    private GraphicsText missedPointsText;
     private Timer timer;
     private TimerTask task; // 1 timer for number of gestures falling, another for which gestures falling
     //private Deque<FallingGestures> currentGestures; // Deque that stores the current gestures
     //private int numGestures;
     private int[] scores; // Data Structure that stores the scores. Must choose most efficient structue
-    private int missedPoints; 
+    private int missedPoints;
+    private int score; 
     private Score scoreManager;
+    private endGame endGame;
 
     public GestureRushGame() {
        // currentGestures = new ArrayDeque<>();
@@ -67,6 +70,7 @@ public class GestureRushGame {
             return removed;
         }, eraserRadius);
 
+        score = 0;
         missedPoints = 0;
         
         scoreText = new GraphicsText("Score: ", 10, 30);
@@ -81,9 +85,14 @@ public class GestureRushGame {
         highScoreText.setFontSize(32);
         highScoreText.setFillColor(Color.BLUE);
 
+        missedPointsText = new GraphicsText("Missed: ", 10, 70);
+        missedPointsText.setFontSize(16);
+        missedPointsText.setFillColor(Color.BLUE);
+
         CANVAS.add(scoreText);
         CANVAS.add(prevScoreText);
         CANVAS.add(highScoreText);
+        CANVAS.add(missedPointsText);
 
         spawnNext();
         CANVAS.animate(this::update);
@@ -108,13 +117,19 @@ public class GestureRushGame {
 
             if (!stillOn) {
                 CANVAS.remove(currentGesture);
-                missedPoints = currentGesture.getTemplate().getPoints().size() - eraser.getRemovedPoints(); //Subtracting by total removed points needs to be gesture by gesture
-                System.out.println("Missed Points: " + missedPoints);
+                missedPoints += currentGesture.getTemplate().getPoints().size() - eraser.getTempRemovedPoints(); 
+                missedPointsText.setText("Missed: " + missedPoints + " Points!!!");
                 currentGesture = null;
                 spawnNext();
             }
         }
-        scoreText.setText("Score: " + eraser.getRemovedPoints());
+        score = eraser.getRemovedPoints();
+        scoreText.setText("Score: " + score);
+        if (missedPoints >= 200){ // Once player misses 200 points, game ends
+            scores[0] = score; // Put score into Score Manager, (Choose data structure for this/delete if not necessary)
+            CANVAS.closeWindow();
+            endGame = new endGame(scoreManager);
+        }
     }
     
     /**

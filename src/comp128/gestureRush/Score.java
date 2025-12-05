@@ -1,7 +1,7 @@
 package comp128.gestureRush;
 
-import java.util.Queue;
 import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class Score {
 
@@ -11,8 +11,7 @@ public class Score {
     private int topScore;
     private final Queue<GameResult> history = new ArrayDeque<>(HISTORY_SIZE);
 
-    public Score() {
-    }
+    public Score(){}
 
     public void resetNewGame() {
         currentScore = 0;

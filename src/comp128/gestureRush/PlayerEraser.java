@@ -18,6 +18,7 @@ public class PlayerEraser {
     private final Ellipse RING;
     private boolean isMouseDown = false;
     private int numRemovedPoints;
+    private int tempRemovedPoints; // points erased per template
 
     public PlayerEraser(CanvasWindow canvas, EraseCallback c, double radius){
         this.CANVAS = canvas;
@@ -28,6 +29,7 @@ public class PlayerEraser {
         RING.setStrokeColor(Color.RED);
         RING.setFillColor(new Color(0, 0, 0, 0));
         canvas.add(RING);
+        numRemovedPoints = 0;
         numRemovedPoints = 0;
 
         hookEvents();
@@ -42,6 +44,7 @@ public class PlayerEraser {
             Point p = e.getPosition();
             RING.setCenter(p.getX(), p.getY());
             int removed = POINTS.onErase(p, RADIUS); // shows amount of points removed on single erase
+            tempRemovedPoints = 0;
             if (removed > 0) {
                 System.out.println("removed " + removed); 
             }
@@ -54,6 +57,7 @@ public class PlayerEraser {
             if (removed > 0) {
                 //System.out.println("removed " + removed);
                 numRemovedPoints += removed; 
+                tempRemovedPoints += removed;
             }
         });
 
@@ -65,5 +69,9 @@ public class PlayerEraser {
 
     public int getRemovedPoints(){ // Using this for the score
         return numRemovedPoints;
+    }
+
+    public int getTempRemovedPoints(){
+        return tempRemovedPoints;
     }
 }
