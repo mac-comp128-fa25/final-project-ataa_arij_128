@@ -10,6 +10,7 @@ public class Medal {
         this.minScore = minScore;
     }
 
+    // We're using a simple array of medal levels; linear scan is fine in this case(it has a constant of 3 elements)
     private static final Medal[] MEDAL_LEVELS = {
         new Medal("Bronze", 0),   
         new Medal("Silver", 20),  
@@ -33,8 +34,4 @@ public class Medal {
         }
         return chosenMedal;
     }
-
-
-
-
 }

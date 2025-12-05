@@ -23,26 +23,21 @@ public class GestureTemplate {
     }
     
     /**
-     * returns points that make up gesture
+     * this returns points that make up gesture
      * @return
      */
     public List<Point> getPoints() { 
         return POINTS; 
     }
-
-    // public void removePoint(){
-        // We can delete this right
-    // }
     
     /**
      * (what does this method do)
+     * it is currently just a stub that always returns false
      * @param p
      * @return
      */
     public boolean checkifTrue(Point p){
         return false;
     }
-
-
 }
 

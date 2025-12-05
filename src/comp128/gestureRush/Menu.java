@@ -34,24 +34,25 @@ public class Menu {
 
         GraphicsText rules = new GraphicsText(
             "Rules: One gesture falls from the top with increasing speed,"
-        
         );
         rules.setFillColor(Color.WHITE);
         rules.setFontSize(14);
         rules.setCenter(canvas.getWidth() / 2.0, 260);
-         GraphicsText rulesTwo = new GraphicsText(
+
+        GraphicsText rulesTwo = new GraphicsText(
             "draw to match before it hits the bottom!"
         );
         rulesTwo.setFillColor(Color.WHITE);
         rulesTwo.setFontSize(14);
         rulesTwo.setCenter(canvas.getWidth() / 2.0, 290);
+
         canvas.add(rules);
         canvas.add(rulesTwo);
 
         startButton.onClick(() -> {
             canvas.closeWindow();
             Score scoreManager = new Score();
-            new GestureRushGame();  
+            new GestureRushGame(scoreManager);  
         });
     }
 }

@@ -103,7 +103,7 @@ public class endGame {
         restartButton.onClick(() -> {
             canvas.closeWindow();
             scoreManager.resetNewGame();
-            new GestureRushGame();
+            new GestureRushGame(scoreManager);
         });
     }
 }

@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import edu.macalester.graphics.CanvasWindow;
 import edu.macalester.graphics.GraphicsText;
@@ -19,80 +17,79 @@ public class GestureRushGame {
     private final Random rand = new Random();
 
     private double shapeSize = 90;
-    private PlayerEraser eraser;
-    private double eraserRadius = 5;
-    private final ArrayList<Point> removedLog = new ArrayList<>(); // won't this list be changing (should it be final)
-    private GraphicsText scoreText;
-    private GraphicsText prevScoreText;
-    private GraphicsText highScoreText;
-    private GraphicsText missedPointsText;
-    private Timer timer;
-    private TimerTask task; // 1 timer for number of gestures falling, another for which gestures falling
-    //private Deque<FallingGestures> currentGestures; // Deque that stores the current gestures
-    //private int numGestures;
-    private int[] scores; // Data Structure that stores the scores. Must choose most efficient structue
-    private int missedPoints;
-    private int score; 
-    private Score scoreManager;
-    private endGame endGame;
+    private final PlayerEraser eraser;
+    private final double eraserRadius = 5;
+    private final ArrayList<Point> removedLog = new ArrayList<>(); // Stores removed coords for potential future scoring logic
 
-    public GestureRushGame() {
-       // currentGestures = new ArrayDeque<>();
-       // numGestures = 1;
-        scoreManager = new Score();
-        timer = new Timer();
-        task = new TimerTask() { // Currently has no effect, after certain amount of time more gestures start falling
-            @Override
-            public void run(){
-             //   numGestures++;
-            }
-        };
-        timer.schedule(task, 2000); // Delay will be 15000 (15 seconds) 
+    private final Score scoreManager;
+
+    // UI text for live display
+    private final GraphicsText scoreText;
+    private final GraphicsText timerText;
+    private final GraphicsText highScoreText;   //top score display
+    private final GraphicsText missedText;      //missed points display
+
+    // Game runs for 1 minute 30 seconds as of now
+    private double timeRemaining = 90.0; 
+    private boolean gameOver = false;
+
+    // Once player misses enough points (segments), game ends
+    private int missedPoints = 0;
+    private static final int MISSED_LIMIT = 200; // tweak this threshold as you like
+
+    public GestureRushGame(Score scoreManager) {
+        // Shared score
+        this.scoreManager = scoreManager;
+        this.scoreManager.resetNewGame();
+        missedPoints = 0;
+
         CANVAS = new CanvasWindow("Gesture Rush", 600, 600);
         CANVAS.setBackground(Color.WHITE);
+
         TEMPLATES = new ArrayList<>();
         TEMPLATES.add(createArrow());
         TEMPLATES.add(createCircle());
         TEMPLATES.add(createTriangle());
 
         eraser = new PlayerEraser(CANVAS, (p, r) -> {
-            if (currentGesture == null) return 0;
-            int removed = currentGesture.eraseAt(p, r, removedLog); // Every point (where mouse clicks) being added to list regardless whether it's a gesture point or not
+            if (currentGesture == null || gameOver) return 0;
+            // Every erase request tries to remove segments from the current gesture
+            int removed = currentGesture.eraseAt(p, r, removedLog);
             if (removed > 0 && currentGesture.isFullyErased()) {
+                // Gesture fully erased and hence we award points based on the fraction erased
+                int total = currentGesture.getTotalSegments();
+                int erasedSegs = currentGesture.getErasedSegments();
+                scoreManager.calculatePoints(erasedSegs, total);
+                updateScoreLabel();
+
                 CANVAS.remove(currentGesture);
                 currentGesture = null;
                 spawnNext();
             }
-            // if (removed > 0 && !currentGesture.isFullyErased()){
-            //     currentGesture.getTemplate().getPoints().size();
-            // }
-            // System.out.println(removedLog);
             return removed;
         }, eraserRadius);
 
-        score = 0;
-        missedPoints = 0;
-        
-        scoreText = new GraphicsText("Score: ", 10, 30);
-        scoreText.setFontSize(32);
-        scoreText.setFillColor(Color.BLUE);
-
-        prevScoreText = new GraphicsText("Previous: ", CANVAS.getWidth()/3, 30);
-        prevScoreText.setFontSize(32);
-        prevScoreText.setFillColor(Color.BLUE);
-
-        highScoreText = new GraphicsText("High: ", CANVAS.getWidth() - 200, 30);
-        highScoreText.setFontSize(32);
-        highScoreText.setFillColor(Color.BLUE);
-
-        missedPointsText = new GraphicsText("Missed: ", 10, 70);
-        missedPointsText.setFontSize(16);
-        missedPointsText.setFillColor(Color.BLUE);
-
+        // Score display
+        scoreText = new GraphicsText("Score: 0", 10, 30);
+        scoreText.setFontSize(24);
+        scoreText.setFillColor(Color.BLACK);
         CANVAS.add(scoreText);
-        CANVAS.add(prevScoreText);
+
+        // Timer display (1:30 initially)
+        timerText = new GraphicsText("Time: 01:30", CANVAS.getWidth() - 160, 30);
+        timerText.setFontSize(24);
+        timerText.setFillColor(Color.RED);
+        CANVAS.add(timerText);
+
+        highScoreText = new GraphicsText("Top: " + scoreManager.getTopScore(), 10, 60);
+        highScoreText.setFontSize(18);
+        highScoreText.setFillColor(new Color(40, 40, 160));
         CANVAS.add(highScoreText);
-        CANVAS.add(missedPointsText);
+
+        missedText = new GraphicsText("Missed: 0", 10, 90);
+        missedText.setFontSize(18);
+        missedText.setFillColor(Color.DARK_GRAY);
+        CANVAS.add(missedText);
 
         spawnNext();
         CANVAS.animate(this::update);
@@ -109,31 +106,102 @@ public class GestureRushGame {
 
     /**
      * updates the position of the falling gesture and spawns the next gesture once the current gesture no longer exists
+     * Also decrements the game timer and ends the game when time is up.
      */
     private void update() {
+        if (gameOver) {
+            return;
+        }
+
         double dt = 0.025;
+
+        timeRemaining -= dt;
+        if (timeRemaining < 0) {
+            timeRemaining = 0;
+        }
+        updateTimerLabel();
+
+        if (timeRemaining <= 0) {
+            endGameNow();
+            return;
+        }
+
         if (currentGesture != null) {
             boolean stillOn = currentGesture.update(dt, CANVAS.getHeight());
 
             if (!stillOn) {
+                // as the respective Gesture falls off screen, we award points based on how much was erased
+                int total = currentGesture.getTotalSegments();
+                int erasedSegs = currentGesture.getErasedSegments();
+                int missed = total - erasedSegs;
+                if (missed < 0) missed = 0; // safety
+
+                scoreManager.calculatePoints(erasedSegs, total);
+                updateScoreLabel();
+
+                // we accumulate the missed segments; if too many, game over
+                missedPoints += missed;
+                missedText.setText("Missed: " + missedPoints);
+                // System.out.println("Missed Points so far: " + missedPoints);
+
                 CANVAS.remove(currentGesture);
-                missedPoints += currentGesture.getTemplate().getPoints().size() - eraser.getTempRemovedPoints(); 
-                missedPointsText.setText("Missed: " + missedPoints + " Points!!!");
                 currentGesture = null;
+
+                if (missedPoints >= MISSED_LIMIT) {
+                    endGameNow();
+                    return;
+                }
+
                 spawnNext();
             }
         }
-        score = eraser.getRemovedPoints();
-        scoreText.setText("Score: " + score);
-        if (missedPoints >= 200){ // Once player misses 200 points, game ends
-            scores[0] = score; // Put score into Score Manager, (Choose data structure for this/delete if not necessary)
-            CANVAS.closeWindow();
-            endGame = new endGame(scoreManager);
+    }
+
+    private void updateScoreLabel() {
+        int current = scoreManager.getCurrentScore();
+        int top = scoreManager.getTopScore();
+        // Show live "top" as the max of historical top and current run,
+        // so the player sees when they've beaten the old top score.
+        int displayedTop = Math.max(top, current);
+
+        scoreText.setText("Score: " + current);
+        highScoreText.setText("Top: " + displayedTop);
+    }
+
+    private void updateTimerLabel() {
+        int totalSeconds = (int) Math.ceil(timeRemaining);
+        if (totalSeconds < 0) totalSeconds = 0;
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        String text = String.format("%02d:%02d", minutes, seconds);
+        timerText.setText("Time: " + text);
+    }
+
+    // method for end game 
+    // add score to scores
+
+    /**
+     * Cleanly end the game: score current gesture, finalize score, show end screen.
+     */
+    private void endGameNow() {
+        gameOver = true;
+
+        if (currentGesture != null) {
+            int total = currentGesture.getTotalSegments();
+            int erasedSegs = currentGesture.getErasedSegments();
+            scoreManager.calculatePoints(erasedSegs, total);
+            updateScoreLabel();
         }
+
+        // finalize the result → compute medal, update history + top score
+        scoreManager.finishedGame();
+
+        CANVAS.closeWindow();
+        new endGame(scoreManager);
     }
     
     /**
-     * helper method that creates line segments between points (is this accurate)
+     * this is a helper method that creates line segments between points (is this accurate)
      * @param lineseg
      * @param x1
      * @param y1
@@ -143,14 +211,13 @@ public class GestureRushGame {
      */
     private void addLinePoints(List<Point> lineseg, double x1, double y1, double x2, double y2, int steps){
         for (int i = 0; i <= steps; i++) {
-        double t = i / (double) steps;
-        double x = x1 + t * (x2 - x1);
-        double y = y1 + t * (y2 - y1);
-        lineseg.add(new Point(x, y));
+            double t = i / (double) steps;
+            double x = x1 + t * (x2 - x1);
+            double y = y1 + t * (y2 - y1);
+            lineseg.add(new Point(x, y));
         }
     }
                             
-
     /**
      * creates arrow gesture
      * @return arrow template
@@ -162,7 +229,6 @@ public class GestureRushGame {
         addLinePoints(arrowPoints, 50, 10, 70, 30, 16); 
         return new GestureTemplate("arrow", arrowPoints);
     }
-
 
     /**
      * creates circle gesture
@@ -194,9 +260,5 @@ public class GestureRushGame {
         return new GestureTemplate("triangle", trianglePoints);
     }
 
-    // method for end game 
-    // add score to scores
-
-    // Arrow has 59 points, Circle has 33, Triangle has 75
-
+    // Arrow has 59 points, Circle has 33, Triangle has 75 (approx based on steps)
 }
