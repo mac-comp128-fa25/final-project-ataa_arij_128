@@ -15,7 +15,7 @@ public class FallingGestures extends GraphicsGroup {
     private int aliveSegments;
     private final GestureTemplate template;
 
-    public FallingGestures(GestureTemplate template, double canvasWidth, double shapeSize) {
+    public FallingGestures(GestureTemplate template, double canvasWidth, double shapeSize, double speedMultiplier) {
         this.size = shapeSize;
         this.template = template;
 
@@ -40,7 +40,7 @@ public class FallingGestures extends GraphicsGroup {
         aliveSegments = SEGMENTS.size();
 
         setPosition(x, y);
-        SPEED = 120 + Math.random() * 78;
+        SPEED = (120 + Math.random() * 78) * speedMultiplier;
     }
 
     /**

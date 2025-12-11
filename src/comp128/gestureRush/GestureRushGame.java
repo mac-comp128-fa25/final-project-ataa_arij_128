@@ -17,6 +17,7 @@ public class GestureRushGame {
     private final Random rand = new Random();
 
     private double shapeSize = 90;
+    private double speedMultiplier = 1.0;
     private final PlayerEraser eraser;
     private final double eraserRadius = 5;
     private final ArrayList<Point> removedLog = new ArrayList<>(); // Stores removed coords for potential future scoring logic
@@ -42,6 +43,7 @@ public class GestureRushGame {
         this.scoreManager = scoreManager;
         this.scoreManager.resetNewGame();
         missedPoints = 0;
+        speedMultiplier = 1.0;
 
         CANVAS = new CanvasWindow("Gesture Rush", 600, 600);
         CANVAS.setBackground(Color.WHITE);
@@ -104,7 +106,7 @@ public class GestureRushGame {
      */
     private void spawnNext() {
         GestureTemplate t = TEMPLATES.get(rand.nextInt(TEMPLATES.size()));
-        currentGesture = new FallingGestures(t, CANVAS.getWidth(), shapeSize);
+        currentGesture = new FallingGestures(t, CANVAS.getWidth(), shapeSize, speedMultiplier);
         CANVAS.add(currentGesture);
     }
 
@@ -142,6 +144,7 @@ public class GestureRushGame {
 
                 scoreManager.calculatePoints(erasedSegs, total);
                 updateScoreLabel();
+                updateSpeedMultiplier();
 
                 // we accumulate the missed segments; if too many, game over
                 missedPoints += missed;
@@ -183,6 +186,21 @@ public class GestureRushGame {
 
     // method for end game 
     // add score to scores
+
+    // resets or increases speed based on points
+
+    private void updateSpeedMultiplier() {
+        int currentScore = scoreManager.getCurrentScore();
+        if (currentScore >= 60) {
+            speedMultiplier = 1.4;
+        }
+        else if (currentScore >= 40) {
+            speedMultiplier = 1.3;  
+        } else if (currentScore >= 20) {
+            speedMultiplier = 1.15; 
+        } else {
+            speedMultiplier = 1.0;}
+    }
 
     /**
      * Cleanly end the game: score current gesture, finalize score, show end screen.
