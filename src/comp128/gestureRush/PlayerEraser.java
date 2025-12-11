@@ -59,10 +59,10 @@ public class PlayerEraser {
 
         CANVAS.onMouseUp(e -> {
             isMouseDown = false;
-            //System.out.println("Total Removed Points: " + numRemovedPoints);
         });
     }
-     public int getRemovedPoints(){ // Using this for the score (if needed)
+    
+    public int getRemovedPoints(){ // Using this for the score (if needed)
          return numRemovedPoints;
     }
 }

@@ -31,8 +31,7 @@ public class GestureTemplate {
     }
     
     /**
-     * (what does this method do)
-     * it is currently just a stub that always returns false
+     * Currently a stub that always returns false
      * @param p
      * @return
      */

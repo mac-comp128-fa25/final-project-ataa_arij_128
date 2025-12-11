@@ -13,14 +13,14 @@ public class GestureRushGame {
 
     private final CanvasWindow CANVAS;
     private FallingGestures currentGesture;
-    private final List<GestureTemplate> TEMPLATES; // Affects of Deque v List (can talk about in report)
+    private final List<GestureTemplate> TEMPLATES; 
     private final Random rand = new Random();
 
     private double shapeSize = 90;
     private double speedMultiplier = 1.0;
     private final PlayerEraser eraser;
     private final double eraserRadius = 5;
-    private final ArrayList<Point> removedLog = new ArrayList<>(); // Stores removed coords for potential future scoring logic
+    private final ArrayList<Point> removedLog = new ArrayList<>(); // Stores removed coords for scoring logic
 
     private final Score scoreManager;
 
@@ -36,7 +36,7 @@ public class GestureRushGame {
 
     // Once player misses enough points (segments), game ends
     private int missedPoints = 0;
-    private static final int MISSED_LIMIT = 200; // tweak this threshold as you like
+    private static final int MISSED_LIMIT = 200; 
 
     public GestureRushGame(Score scoreManager) {
         // Shared score
@@ -111,7 +111,7 @@ public class GestureRushGame {
     }
 
     /**
-     * updates the position of the falling gesture and spawns the next gesture once the current gesture no longer exists
+     * Updates the position of the falling gesture and spawns the next gesture once the current gesture no longer exists
      * Also decrements the game timer and ends the game when time is up.
      */
     private void update() {
@@ -149,7 +149,6 @@ public class GestureRushGame {
                 // we accumulate the missed segments; if too many, game over
                 missedPoints += missed;
                 missedText.setText("Missed: " + missedPoints);
-                // System.out.println("Missed Points so far: " + missedPoints);
 
                 CANVAS.remove(currentGesture);
                 currentGesture = null;
@@ -164,6 +163,9 @@ public class GestureRushGame {
         }
     }
 
+    /**
+     * Helper updates score label
+     */
     private void updateScoreLabel() {
         int current = scoreManager.getCurrentScore();
         int top = scoreManager.getTopScore();
@@ -175,6 +177,9 @@ public class GestureRushGame {
         highScoreText.setText("Top: " + displayedTop);
     }
 
+    /**
+     * Helper updates timer label
+     */
     private void updateTimerLabel() {
         int totalSeconds = (int) Math.ceil(timeRemaining);
         if (totalSeconds < 0) totalSeconds = 0;
@@ -183,12 +188,10 @@ public class GestureRushGame {
         String text = String.format("%02d:%02d", minutes, seconds);
         timerText.setText("Time: " + text);
     }
-
-    // method for end game 
-    // add score to scores
-
-    // resets or increases speed based on points
-
+    
+    /**
+     * helper increases speed based on score
+     */
     private void updateSpeedMultiplier() {
         int currentScore = scoreManager.getCurrentScore();
         if (currentScore >= 60) {
@@ -245,7 +248,7 @@ public class GestureRushGame {
      * @return arrow template
      */
     private GestureTemplate createArrow() {
-        ArrayList<Point> arrowPoints = new ArrayList<>(); // Data structure question to consider, will the program run whether these are stored in lists or deques, will time complexity change if stored in diff. structure
+        ArrayList<Point> arrowPoints = new ArrayList<>(); 
         addLinePoints(arrowPoints, 50, 10, 50, 70, 24); 
         addLinePoints(arrowPoints, 50, 10, 30, 30, 16);
         addLinePoints(arrowPoints, 50, 10, 70, 30, 16); 
@@ -256,7 +259,6 @@ public class GestureRushGame {
      * creates a checkmark shape
      * @return checkmark template
      */
-
     private GestureTemplate createCheckmark() {
         ArrayList<Point> checkPoints = new ArrayList<>();
         addLinePoints(checkPoints, 25, 30, 20, 70, 20);
@@ -268,7 +270,6 @@ public class GestureRushGame {
      * a zig zag-esque shape
      * @return z shape
      */
-
     private GestureTemplate createZShape() {
         ArrayList<Point> zPoints = new ArrayList<>();
         addLinePoints(zPoints, 20, 30, 40, 70, 15);
@@ -281,7 +282,6 @@ public class GestureRushGame {
      * creates a shape resembling a lightning bolt/flash
      * @return lightning
      */
-
     private GestureTemplate createLightning() {
         ArrayList<Point> boltPoints = new ArrayList<>();
         addLinePoints(boltPoints, 50, 10, 35, 40, 15);
@@ -319,6 +319,4 @@ public class GestureRushGame {
         addLinePoints(trianglePoints, xRight, yRight, xTop,  yTop, 24);
         return new GestureTemplate("triangle", trianglePoints);
     }
-
-    // Arrow has 59 points, Circle has 33, Triangle has 75 (approx based on steps)
 }
