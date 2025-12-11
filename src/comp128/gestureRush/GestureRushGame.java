@@ -49,7 +49,11 @@ public class GestureRushGame {
         TEMPLATES = new ArrayList<>();
         TEMPLATES.add(createArrow());
         TEMPLATES.add(createCircle());
+        TEMPLATES.add(createLightning());
+        TEMPLATES.add(createZShape());
         TEMPLATES.add(createTriangle());
+        TEMPLATES.add(createCheckmark());
+        
 
         eraser = new PlayerEraser(CANVAS, (p, r) -> {
             if (currentGesture == null || gameOver) return 0;
@@ -228,6 +232,44 @@ public class GestureRushGame {
         addLinePoints(arrowPoints, 50, 10, 30, 30, 16);
         addLinePoints(arrowPoints, 50, 10, 70, 30, 16); 
         return new GestureTemplate("arrow", arrowPoints);
+    }
+
+    /**
+     * creates a checkmark shape
+     * @return checkmark template
+     */
+
+    private GestureTemplate createCheckmark() {
+        ArrayList<Point> checkPoints = new ArrayList<>();
+        addLinePoints(checkPoints, 25, 30, 20, 70, 20);
+        addLinePoints(checkPoints, 45, 70, 80, 20, 25);
+        return new GestureTemplate("check", checkPoints);
+    }
+
+    /**
+     * a zig zag-esque shape
+     * @return z shape
+     */
+
+    private GestureTemplate createZShape() {
+        ArrayList<Point> zPoints = new ArrayList<>();
+        addLinePoints(zPoints, 20, 30, 40, 70, 15);
+        addLinePoints(zPoints, 40, 70, 60, 30, 15);
+        addLinePoints(zPoints, 60, 30, 80, 70, 15);
+        return new GestureTemplate("zigzag", zPoints);
+    }
+
+    /**
+     * creates a shape resembling a lightning bolt/flash
+     * @return lightning
+     */
+
+    private GestureTemplate createLightning() {
+        ArrayList<Point> boltPoints = new ArrayList<>();
+        addLinePoints(boltPoints, 50, 10, 35, 40, 15);
+        addLinePoints(boltPoints, 35, 40, 55, 50, 15);
+        addLinePoints(boltPoints, 55, 50, 40, 80, 15);
+        return new GestureTemplate("lightning", boltPoints);
     }
 
     /**
