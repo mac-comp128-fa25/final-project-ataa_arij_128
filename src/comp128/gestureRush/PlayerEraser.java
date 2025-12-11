@@ -62,8 +62,5 @@ public class PlayerEraser {
         });
     }
     
-    public int getRemovedPoints(){ // Using this for the score (if needed)
-         return numRemovedPoints;
-    }
 }
 

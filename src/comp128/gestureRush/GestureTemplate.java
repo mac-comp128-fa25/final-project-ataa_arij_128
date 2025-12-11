@@ -30,13 +30,5 @@ public class GestureTemplate {
         return POINTS; 
     }
     
-    /**
-     * Currently a stub that always returns false
-     * @param p
-     * @return
-     */
-    public boolean checkifTrue(Point p){
-        return false;
-    }
 }
 
